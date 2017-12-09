@@ -45,11 +45,9 @@ describe('Products API', function() {
     });
 
 
-    it('Matches product schema', async function() {
-    	const productSchema = chai.tv4.getSchema('/products')
-    	console.log('productResponse', productResponse.body)
-    	console.log('productSchema', productSchema)
-    	expect(productResponse.body).to.be.jsonSchema(productSchema)
+    it('Matches product schema', function() {
+        const productSchema = chai.tv4.getSchema('/products/productID')
+        expect(productResponse.body).to.be.jsonSchema(productSchema)
     })
 
 
@@ -102,24 +100,70 @@ describe('Products API', function() {
     })
 })
 
-chai.tv4.addSchema('/products', {
+chai.tv4.addSchema('/products/productID', {
     title: 'Product API Schema',
     type: 'object',
     required: ['id', 'name', 'type', 'upc', 'description', 'model', 'price'],
     properties: {
-        id: 'number',
-        name: 'string',
-        type: 'string',
-        upc: 'string',
-        description: 'string',
-        model: 'string',
-        price: 'number',
-        shipping: 'number',
-        manufacturer: 'string',
-        url: 'string',
-        image: 'string',
-        createdAt: 'string',
-        updatedAt: 'string',
-        categories: 'array'
+        id: {
+            type: 'number',
+        },
+        name: {
+            type: 'string',
+        },
+        type: {
+            type: 'string',
+        },
+        upc: {
+            type: 'string',
+        },
+        description: {
+            type: 'string',
+        },
+        model: {
+            type: 'string',
+        },
+        price: {
+            type: 'number',
+        },
+        shipping: {
+            type: 'number'
+        },
+        manufacturer: {
+            type: 'string',
+        },
+        url: {
+            type: 'string',
+        },
+        image: {
+            type: 'string',
+        },
+        createdAt: {
+            type: 'string',
+        },
+        updatedAt: {
+            type: 'string',
+        },
+        categories: {
+            type: 'array',
+            uniqueItems: true,
+            items: {
+            	type: 'object',
+            	properties:{
+            		id:{
+            			type: 'string',
+            		},
+            		name:{
+            			type:'string',
+            		},
+            		createdAt:{
+            			type:'string'
+            		},
+            		updatedAt:{
+            			type:'string'
+            		}
+            	}
+            }
+        },
     }
 })
