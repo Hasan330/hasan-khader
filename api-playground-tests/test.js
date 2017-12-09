@@ -13,17 +13,18 @@ const expect = chai.expect;
 const request = chai.request
 
 
+//Testing the Healthcheck Route
 describe('Healthcheck Route', function() {
-    let healthcheckResponse
+    let healthcheckResponse;
     it('Checks route stability', async function() {
-       healthcheckResponse = await request('localhost:3030')
-                .get(`/healthcheck`)
+        healthcheckResponse = await request('localhost:3030')
+            .get(`/healthcheck`)
 
-        
+
         expect(healthcheckResponse).to.have.status(200)
     })
 
-    it('Checks healthcheks schema', function(){
+    it('Checks healthcheks schema', function() {
         const schema = chai.tv4.getSchema('/healthcheck')
 
         expect(healthcheckResponse.body).to.be.jsonSchema(schema)
@@ -31,6 +32,8 @@ describe('Healthcheck Route', function() {
 })
 
 
+
+//Testing general failure cases such as searching for wrong routes
 describe('General Failure Cases', function() {
     it('Handles searching for wrong route', async function() {
         try {
@@ -44,6 +47,8 @@ describe('General Failure Cases', function() {
 })
 
 
+
+//Testing the Product's Route
 describe('Products API', function() {
     const sampleProductID = 48530;
     let productResponse;
@@ -59,13 +64,12 @@ describe('Products API', function() {
 
 
     it('Conforms to products schema', function() {
-        // console.log('productResponse', productResponse.body)
         const schema = chai.tv4.getSchema('/products')
         expect(productResponse.body).to.be.jsonSchema(schema)
     })
 
 
-    it('Is limited to 10 items', function() {
+    it('Response is limited to 10 items', function() {
         expect(productResponse).to.nested.include({ 'body.limit': 10 });
     })
 
@@ -152,7 +156,7 @@ describe('Products API', function() {
 
         //Assert product was updated correctly
         expect(response).to.have.status(200)
-        .and.to.nested.include({ 'body.name': 'Updated product' })
+            .and.to.nested.include({ 'body.name': 'Updated product' })
     })
 
 
@@ -176,6 +180,32 @@ describe('Products API', function() {
     })
 
 })
+
+
+//TODO
+describe('Categories API', function() {
+    //TODO: Add test cases
+    it('does nothing yet', function() {
+
+    })
+})
+
+//TODO
+describe('Stores API', function() {
+    //TODO: Add test cases
+    it('does nothing yet', function() {
+
+    })
+})
+
+//TODO
+describe('Services API', function() {
+    //TODO: Add test cases
+    it('does nothing yet', function() {
+
+    })
+})
+
 
 
 chai.tv4.addSchema('/products', {
@@ -275,23 +305,23 @@ chai.tv4.addSchema('/healthcheck', {
     title: 'Healthcheck API',
     type: 'object',
     required: ['uptime', 'readonly', 'documents'],
-    properties:{
-        uptime:{
+    properties: {
+        uptime: {
             type: 'number',
         },
-        readonly:{
+        readonly: {
             type: 'boolean'
         },
-        documents:{
+        documents: {
             type: 'object',
-            properties:{
-                products:{
+            properties: {
+                products: {
                     type: 'number'
                 },
-                stores:{
+                stores: {
                     type: 'number'
                 },
-                categories:{
+                categories: {
                     type: 'number'
                 }
             }
