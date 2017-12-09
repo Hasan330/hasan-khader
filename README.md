@@ -41,7 +41,7 @@ Since the app consists Basic Users who should be able to do a subset of what Mem
 
 
 2) Member Users Flows:
-
+### Highest Priority:
 	- Test ability to create and track multi-currency accounts
 	- Test account synchronization across multiple device
 	- Test adding a passcode for the account
