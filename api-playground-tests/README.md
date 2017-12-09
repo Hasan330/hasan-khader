@@ -18,6 +18,9 @@ This will be done in a `build-up` then `teardown` fashion to ensure we don't flo
 	- Update a field and make sure it was updated
 	- Delete a field and make sure it no longer exists
 5) Checking data validity
+6) Make sure failure cases are handled:
+	- Searching for a wrong product
+	- Updating product with missing required fields
 
 I will apply this approach to the `Products` route, the same approach can be replicated for `Categories, Stores and Services` routes.
 
@@ -25,3 +28,9 @@ I will apply this approach to the `Products` route, the same approach can be rep
 1) Making sure app is up and running
 2) Checking `health-check` schema
 3) Checking consistency of data displayed (by checking that it matches the total number of data in the endpoints)
+
+
+# TO-DOs:
+1) Adding test casess to `Categories, Stores and Services` routes.
+2) Moving Schemas outside test case
+3) Splitting test cases into files based on route for better code readability and structure
