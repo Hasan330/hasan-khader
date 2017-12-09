@@ -12,11 +12,6 @@ chai.use(chaiHttp);
 const expect = chai.expect;
 const request = chai.request
 
-chai.tv4.banUnknown = true;
-chai.tv4.multiple = false;
-chai.tv4.cyclicCheck = false;
-
-
 describe('General Failure Cases', function() {
     it('Handles searching for wrong route', async function() {
         try {
@@ -34,6 +29,19 @@ describe('Products API', function() {
     const sampleProductID = 48530;
     let productResponse;
 
+    it('Gets to products list', async function() {
+        productResponse = await request('localhost:3030')
+            .get(`/products/`)
+
+        expect(productResponse).to.have.status(200)
+    })
+
+    it('Conforms to products schema', function() {
+        // console.log('productResponse', productResponse.body)
+        const schema = chai.tv4.getSchema('/products/')
+        expect(productResponse.body).to.be.jsonSchema(schema)
+    })
+
     it('Gets product by id', async function() {
         productResponse = await request('localhost:3030')
             .get(`/products/${sampleProductID}`)
@@ -46,7 +54,7 @@ describe('Products API', function() {
 
 
     it('Matches product schema', function() {
-        const productSchema = chai.tv4.getSchema('/products/productID')
+        const productSchema = chai.tv4.getSchema('//productID')
         expect(productResponse.body).to.be.jsonSchema(productSchema)
     })
 
@@ -88,20 +96,38 @@ describe('Products API', function() {
                 price: 200,
                 shipping: 22,
                 manufacturer: 'Duracel',
+                url: 'someurl.com',
+                image: 'some-image'
             })
     })
 
-
-    it('Gets to product API', async function() {
-        const product = await request('localhost:3030')
-            .get(`/products/`)
-
-        expect(product).to.have.status(200)
-    })
 })
 
-chai.tv4.addSchema('/products/productID', {
-    title: 'Product API Schema',
+chai.tv4.addSchema('/products/', {
+    title: 'Products API Schema',
+    type: 'object',
+    required: ['total', 'limit', 'skip', 'data'],
+    properties: {
+        total: {
+            type: 'number',
+        },
+        limit: {
+            type: 'number',
+        },
+        skip: {
+            type: 'number',
+        },
+        data: {
+            type: 'array',
+            items: {
+                $ref: '//productID',
+            }
+        }
+    }
+})
+
+chai.tv4.addSchema('//productID', {
+    title: 'Product Item Schema',
     type: 'object',
     required: ['id', 'name', 'type', 'upc', 'description', 'model', 'price'],
     properties: {
@@ -148,21 +174,21 @@ chai.tv4.addSchema('/products/productID', {
             type: 'array',
             uniqueItems: true,
             items: {
-            	type: 'object',
-            	properties:{
-            		id:{
-            			type: 'string',
-            		},
-            		name:{
-            			type:'string',
-            		},
-            		createdAt:{
-            			type:'string'
-            		},
-            		updatedAt:{
-            			type:'string'
-            		}
-            	}
+                type: 'object',
+                properties: {
+                    id: {
+                        type: 'string',
+                    },
+                    name: {
+                        type: 'string',
+                    },
+                    createdAt: {
+                        type: 'string'
+                    },
+                    updatedAt: {
+                        type: 'string'
+                    }
+                }
             }
         },
     }
