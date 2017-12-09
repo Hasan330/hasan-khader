@@ -12,7 +12,7 @@ A user must be able to view all accounts or single account for certain period of
 
 Since the app consists Basic Users who should be able to do a subset of what Member Users can do, I will split test cases into 2 main criteria:
 
-1) Basic Users Scenarios: (Flows that affect both basic users and member users and sorted by priority)	
+## 1) Basic Users Scenarios: (Flows that affect both basic users and member users and sorted by priority)	
 ### Highest Priority:
 	- Test ability to add accounts
 	- Test ability to add initial account balance
@@ -40,7 +40,7 @@ Since the app consists Basic Users who should be able to do a subset of what Mem
 
 
 
-2) Member Users Flows:
+## 2) Member Users Flows:
 ### Highest Priority:
 	- Test ability to create and track multi-currency accounts
 	- Test account synchronization across multiple device
