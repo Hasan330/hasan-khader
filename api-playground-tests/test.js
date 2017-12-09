@@ -11,13 +11,14 @@ chai.use(chaiHttp);
 
 const expect = chai.expect;
 const request = chai.request
+const appURL = 'localhost:3030';
 
 
 //Testing the Healthcheck Route
 describe('Healthcheck Route', function() {
     let healthcheckResponse;
     it('Checks route stability', async function() {
-        healthcheckResponse = await request('localhost:3030')
+        healthcheckResponse = await request(appURL)
             .get(`/healthcheck`)
 
 
@@ -37,7 +38,7 @@ describe('Healthcheck Route', function() {
 describe('General Failure Cases', function() {
     it('Handles searching for wrong route', async function() {
         try {
-            let wrongURL = await request('localhost:3030')
+            let wrongURL = await request(appURL)
                 .get(`/123`)
         } catch (err) {
             // console.log(err.response.body)
@@ -56,7 +57,7 @@ describe('Products API', function() {
 
 
     it('Gets to products list', async function() {
-        productResponse = await request('localhost:3030')
+        productResponse = await request(appURL)
             .get(`/products`)
 
         expect(productResponse).to.have.status(200)
@@ -77,7 +78,7 @@ describe('Products API', function() {
     it('Fails on searching for wrong product', async function() {
         let wrongProductID = 'wrongproduct'
         try {
-            const product = await request('localhost:3030')
+            const product = await request(appURL)
                 .get(`/products/${wrongProductID}`)
         } catch (err) {
             expect(err)
@@ -87,7 +88,7 @@ describe('Products API', function() {
 
 
     it('Gets product by id', async function() {
-        productResponse = await request('localhost:3030')
+        productResponse = await request(appURL)
             .get(`/products/${sampleProductID}`)
 
         expect(productResponse)
@@ -104,7 +105,7 @@ describe('Products API', function() {
 
 
     it('Adds a product to the products API', async function() {
-        const response = await request('localhost:3030')
+        const response = await request(appURL)
             .post(`/products/`)
             .send({
                 name: 'Newly Added Product',
@@ -127,7 +128,7 @@ describe('Products API', function() {
 
     it('Fails to update product with missing fields to the products API', async function() {
         try {
-            await request('localhost:3030')
+            await request(appURL)
                 .put(`/products/${newProductID}`)
         } catch (err) {
             // console.log(err.response.body)
@@ -139,7 +140,7 @@ describe('Products API', function() {
 
 
     it('Updates product in the products API when correct fields are sent', async function() {
-        const response = await request('localhost:3030')
+        const response = await request(appURL)
             .put(`/products/${newProductID}`)
             .send({
                 name: 'Updated product',
@@ -161,7 +162,7 @@ describe('Products API', function() {
 
 
     it('Deletes added product successfuly', async function() {
-        const response = await request('localhost:3030')
+        const response = await request(appURL)
             .delete(`/products/${newProductID}`)
 
         expect(response).to.have.status(200)
@@ -170,7 +171,7 @@ describe('Products API', function() {
 
     it('Fails on searching for deleted product', async function() {
         try {
-            const product = await request('localhost:3030')
+            const product = await request(appURL)
                 .get(`/products/${newProductID}`)
         } catch (err) {
             expect(err)
