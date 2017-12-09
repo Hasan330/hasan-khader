@@ -51,7 +51,6 @@ describe('General Failure Cases', function() {
 
 //Testing the Product's Route
 describe('Products API', function() {
-    const sampleProductID = 48530;
     let productResponse;
     let newProductID;
 
@@ -70,7 +69,7 @@ describe('Products API', function() {
     })
 
 
-    it('Response is limited to 10 items', function() {
+    it('Limits response to 10 items', function() {
         expect(productResponse).to.nested.include({ 'body.limit': 10 });
     })
 
@@ -83,12 +82,14 @@ describe('Products API', function() {
         } catch (err) {
             expect(err)
                 .to.have.status(404)
+                .and.to.nested.include({ 'response.body.name': 'NotFound' });
         }
     })
 
 
     it('Gets product by id', async function() {
-        productResponse = await request(appURL)
+        const sampleProductID = 48530;
+         productResponse = await request(appURL)
             .get(`/products/${sampleProductID}`)
 
         expect(productResponse)
@@ -186,7 +187,7 @@ describe('Products API', function() {
 //TODO
 describe('Categories API', function() {
     //TODO: Add test cases
-    it('does nothing yet', function() {
+    it('To be added', function() {
 
     })
 })
@@ -194,7 +195,7 @@ describe('Categories API', function() {
 //TODO
 describe('Stores API', function() {
     //TODO: Add test cases
-    it('does nothing yet', function() {
+    it('To be added', function() {
 
     })
 })
@@ -202,7 +203,7 @@ describe('Stores API', function() {
 //TODO
 describe('Services API', function() {
     //TODO: Add test cases
-    it('does nothing yet', function() {
+    it('To be added', function() {
 
     })
 })
