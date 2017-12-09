@@ -1,0 +1,15 @@
+{
+  "name": "api-playground-tests",
+  "version": "1.0.0",
+  "description": "testing api-playground endpoints",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^4.0.1"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Hasan Khader",
+  "license": "ISC"
+}
