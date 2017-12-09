@@ -1,8 +1,9 @@
 # Steps to run the project
 
 1) Make sure you have node installed
-2) Install mocha
-3) Run `npm test`
+2) Run Best Buy - API Playground at port 3030
+3) Install dependencies, run `npm install`
+4) Run `npm test`
 
 
 # Testing Approach:
