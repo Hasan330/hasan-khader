@@ -43,6 +43,7 @@ describe('General Failure Cases', function() {
         } catch (err) {
             // console.log(err.response.body)
             expect(err).to.have.status(404)
+            .and.to.nested.include({ 'response.body.name': 'NotFound' });
         }
     })
 })
