@@ -12,6 +12,25 @@ chai.use(chaiHttp);
 const expect = chai.expect;
 const request = chai.request
 
+
+describe('Healthcheck Route', function() {
+    let healthcheckResponse
+    it('Checks route stability', async function() {
+       healthcheckResponse = await request('localhost:3030')
+                .get(`/healthcheck`)
+
+        
+        expect(healthcheckResponse).to.have.status(200)
+    })
+
+    it('Checks healthcheks schema', function(){
+        const schema = chai.tv4.getSchema('/healthcheck')
+
+        expect(healthcheckResponse.body).to.be.jsonSchema(schema)
+    })
+})
+
+
 describe('General Failure Cases', function() {
     it('Handles searching for wrong route', async function() {
         try {
@@ -33,7 +52,7 @@ describe('Products API', function() {
 
     it('Gets to products list', async function() {
         productResponse = await request('localhost:3030')
-            .get(`/products/`)
+            .get(`/products`)
 
         expect(productResponse).to.have.status(200)
     })
@@ -41,7 +60,7 @@ describe('Products API', function() {
 
     it('Conforms to products schema', function() {
         // console.log('productResponse', productResponse.body)
-        const schema = chai.tv4.getSchema('/products/')
+        const schema = chai.tv4.getSchema('/products')
         expect(productResponse.body).to.be.jsonSchema(schema)
     })
 
@@ -159,7 +178,7 @@ describe('Products API', function() {
 })
 
 
-chai.tv4.addSchema('/products/', {
+chai.tv4.addSchema('/products', {
     title: 'Products API Schema',
     type: 'object',
     required: ['total', 'limit', 'skip', 'data'],
@@ -248,5 +267,34 @@ chai.tv4.addSchema('//productID', {
                 }
             }
         },
+    }
+})
+
+
+chai.tv4.addSchema('/healthcheck', {
+    title: 'Healthcheck API',
+    type: 'object',
+    required: ['uptime', 'readonly', 'documents'],
+    properties:{
+        uptime:{
+            type: 'number',
+        },
+        readonly:{
+            type: 'boolean'
+        },
+        documents:{
+            type: 'object',
+            properties:{
+                products:{
+                    type: 'number'
+                },
+                stores:{
+                    type: 'number'
+                },
+                categories:{
+                    type: 'number'
+                }
+            }
+        }
     }
 })
