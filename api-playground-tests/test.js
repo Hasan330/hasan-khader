@@ -42,6 +42,10 @@ describe('Products API', function() {
         expect(productResponse.body).to.be.jsonSchema(schema)
     })
 
+    it('Is limited to 10 items', function(){
+    	expect(productResponse).to.nested.include({'body.limit': 10});
+    })
+
     it('Gets product by id', async function() {
         productResponse = await request('localhost:3030')
             .get(`/products/${sampleProductID}`)
@@ -70,7 +74,7 @@ describe('Products API', function() {
         }
     })
 
-    it('Fails to add product with missing fields to the products API', async function() {
+    it('Fails to update product with missing fields to the products API', async function() {
         let newProductID = 1
         try {
             await request('localhost:3030')
@@ -100,6 +104,46 @@ describe('Products API', function() {
                 image: 'some-image'
             })
     })
+
+    let newProductID;
+    it('Adds a product in the products API', async function() {
+        	const response = await request('localhost:3030')
+            .post(`/products/`)
+            .send({
+                name: 'Newly Added Product',
+                type: 'Testing 2',
+                upc: '421',
+                description: 'A super cool product',
+                model: '330',
+                price: 200,
+                shipping: 22,
+                manufacturer: 'Duracel',
+                url: 'someurl.com',
+                image: 'some-image'
+            })
+
+            expect(response).to.have.status(201)
+            .and.to.nested.include({'body.name': 'Newly Added Product'});
+            console.log(response.body)
+            newProductID = response.body.id;
+    });
+
+    it('Deletes added product successfuly', async function(){
+    	const response = await request('localhost:3030')
+    	.delete(`/products/${newProductID}`)
+
+    	console.log(response.body)
+    })
+
+    //   it('Gets added product by id', async function() {
+    //     productResponse = await request('localhost:3030')
+    //         .get(`/products/${newProductID}`)
+
+    //     expect(productResponse)
+    //         .to.have.status(200)
+    //         .and.to.have.property('body')
+    //         .and.to.include({ id: newProductID })
+    // });
 
 })
 
