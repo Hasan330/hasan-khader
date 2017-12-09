@@ -30,6 +30,7 @@ describe('Products API', function() {
     let productResponse;
     let newProductID;
 
+
     it('Gets to products list', async function() {
         productResponse = await request('localhost:3030')
             .get(`/products/`)
@@ -37,15 +38,18 @@ describe('Products API', function() {
         expect(productResponse).to.have.status(200)
     })
 
+
     it('Conforms to products schema', function() {
         // console.log('productResponse', productResponse.body)
         const schema = chai.tv4.getSchema('/products/')
         expect(productResponse.body).to.be.jsonSchema(schema)
     })
 
+
     it('Is limited to 10 items', function() {
         expect(productResponse).to.nested.include({ 'body.limit': 10 });
     })
+
 
     it('Fails on searching for wrong product', async function() {
         let wrongProductID = 'wrongproduct'
@@ -57,6 +61,7 @@ describe('Products API', function() {
                 .to.have.status(404)
         }
     })
+
 
     it('Gets product by id', async function() {
         productResponse = await request('localhost:3030')
@@ -73,13 +78,6 @@ describe('Products API', function() {
         const productSchema = chai.tv4.getSchema('//productID')
         expect(productResponse.body).to.be.jsonSchema(productSchema)
     })
-
-
-
-
-
-
-
 
 
     it('Adds a product to the products API', async function() {
@@ -103,6 +101,7 @@ describe('Products API', function() {
         newProductID = response.body.id;
     });
 
+
     it('Fails to update product with missing fields to the products API', async function() {
         try {
             await request('localhost:3030')
@@ -114,6 +113,7 @@ describe('Products API', function() {
                 .and.to.nested.include({ 'response.body.message': 'Invalid Parameters' });
         }
     })
+
 
     it('Updates product in the products API when correct fields are sent', async function() {
         const response = await request('localhost:3030')
@@ -136,12 +136,14 @@ describe('Products API', function() {
         .and.to.nested.include({ 'body.name': 'Updated product' })
     })
 
+
     it('Deletes added product successfuly', async function() {
         const response = await request('localhost:3030')
             .delete(`/products/${newProductID}`)
 
         expect(response).to.have.status(200)
     })
+
 
     it('Fails on searching for deleted product', async function() {
         try {
@@ -155,6 +157,7 @@ describe('Products API', function() {
     })
 
 })
+
 
 chai.tv4.addSchema('/products/', {
     title: 'Products API Schema',
@@ -178,6 +181,7 @@ chai.tv4.addSchema('/products/', {
         }
     }
 })
+
 
 chai.tv4.addSchema('//productID', {
     title: 'Product Item Schema',
