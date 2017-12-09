@@ -28,6 +28,7 @@ describe('General Failure Cases', function() {
 describe('Products API', function() {
     const sampleProductID = 48530;
     let productResponse;
+    let newProductID;
 
     it('Gets to products list', async function() {
         productResponse = await request('localhost:3030')
@@ -42,8 +43,19 @@ describe('Products API', function() {
         expect(productResponse.body).to.be.jsonSchema(schema)
     })
 
-    it('Is limited to 10 items', function(){
-    	expect(productResponse).to.nested.include({'body.limit': 10});
+    it('Is limited to 10 items', function() {
+        expect(productResponse).to.nested.include({ 'body.limit': 10 });
+    })
+
+    it('Fails on searching for wrong product', async function() {
+        let wrongProductID = 'wrongproduct'
+        try {
+            const product = await request('localhost:3030')
+                .get(`/products/${wrongProductID}`)
+        } catch (err) {
+            expect(err)
+                .to.have.status(404)
+        }
     })
 
     it('Gets product by id', async function() {
@@ -63,51 +75,15 @@ describe('Products API', function() {
     })
 
 
-    it('Fails on searching for wrong product', async function() {
-        let wrongProductID = 'wrongproduct'
-        try {
-            const product = await request('localhost:3030')
-                .get(`/products/${wrongProductID}`)
-        } catch (err) {
-            expect(err)
-                .to.have.status(404)
-        }
-    })
 
-    it('Fails to update product with missing fields to the products API', async function() {
-        let newProductID = 1
-        try {
-            await request('localhost:3030')
-                .put(`/products/${newProductID}`)
-        } catch (err) {
-            // console.log(err.response.body)
-            expect(err)
-                .to.have.status(400)
-                .and.to.nested.include({ 'response.body.message': 'Invalid Parameters' });
-        }
-    })
 
-    it('Updates product in the products API', async function() {
-        let productID = 43900
+
+
+
+
+
+    it('Adds a product to the products API', async function() {
         const response = await request('localhost:3030')
-            .put(`/products/${productID}`)
-            .send({
-                name: 'Test product',
-                type: 'Testing',
-                upc: '421',
-                description: 'A super cool product',
-                model: '330',
-                price: 200,
-                shipping: 22,
-                manufacturer: 'Duracel',
-                url: 'someurl.com',
-                image: 'some-image'
-            })
-    })
-
-    let newProductID;
-    it('Adds a product in the products API', async function() {
-        	const response = await request('localhost:3030')
             .post(`/products/`)
             .send({
                 name: 'Newly Added Product',
@@ -122,28 +98,61 @@ describe('Products API', function() {
                 image: 'some-image'
             })
 
-            expect(response).to.have.status(201)
-            .and.to.nested.include({'body.name': 'Newly Added Product'});
-            console.log(response.body)
-            newProductID = response.body.id;
+        expect(response).to.have.status(201)
+            .and.to.nested.include({ 'body.name': 'Newly Added Product' });
+        newProductID = response.body.id;
     });
 
-    it('Deletes added product successfuly', async function(){
-    	const response = await request('localhost:3030')
-    	.delete(`/products/${newProductID}`)
-
-    	console.log(response.body)
+    it('Fails to update product with missing fields to the products API', async function() {
+        try {
+            await request('localhost:3030')
+                .put(`/products/${newProductID}`)
+        } catch (err) {
+            // console.log(err.response.body)
+            expect(err)
+                .to.have.status(400)
+                .and.to.nested.include({ 'response.body.message': 'Invalid Parameters' });
+        }
     })
 
-    //   it('Gets added product by id', async function() {
-    //     productResponse = await request('localhost:3030')
-    //         .get(`/products/${newProductID}`)
+    it('Updates product in the products API when correct fields are sent', async function() {
+        const response = await request('localhost:3030')
+            .put(`/products/${newProductID}`)
+            .send({
+                name: 'Updated product',
+                type: 'Testing',
+                upc: '421',
+                description: 'A super cool product',
+                model: '330',
+                price: 200,
+                shipping: 22,
+                manufacturer: 'Duracel',
+                url: 'someurl.com',
+                image: 'some-image'
+            })
 
-    //     expect(productResponse)
-    //         .to.have.status(200)
-    //         .and.to.have.property('body')
-    //         .and.to.include({ id: newProductID })
-    // });
+        //Assert product was updated correctly
+        expect(response).to.have.status(200)
+        .and.to.nested.include({ 'body.name': 'Updated product' })
+    })
+
+    it('Deletes added product successfuly', async function() {
+        const response = await request('localhost:3030')
+            .delete(`/products/${newProductID}`)
+
+        expect(response).to.have.status(200)
+    })
+
+    it('Fails on searching for deleted product', async function() {
+        try {
+            const product = await request('localhost:3030')
+                .get(`/products/${newProductID}`)
+        } catch (err) {
+            expect(err)
+                .to.have.status(404)
+                .and.to.nested.include({ 'response.body.name': 'NotFound' });
+        }
+    })
 
 })
 
