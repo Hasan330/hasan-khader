@@ -31,13 +31,14 @@ describe('General Failure Cases', function() {
 
 
 describe('Products API', function() {
-    const sampleProductID = 43900;
+    const sampleProductID = 48530;
+    let productResponse;
 
     it('Gets product by id', async function() {
-        const product = await request('localhost:3030')
+        productResponse = await request('localhost:3030')
             .get(`/products/${sampleProductID}`)
 
-        expect(product)
+        expect(productResponse)
             .to.have.status(200)
             .and.to.have.property('body')
             .and.to.include({ id: sampleProductID })
@@ -45,7 +46,10 @@ describe('Products API', function() {
 
 
     it('Matches product schema', async function() {
-
+    	const productSchema = chai.tv4.getSchema('/products')
+    	console.log('productResponse', productResponse.body)
+    	console.log('productSchema', productSchema)
+    	expect(productResponse.body).to.be.jsonSchema(productSchema)
     })
 
 
@@ -73,17 +77,20 @@ describe('Products API', function() {
         }
     })
 
-    it('Updates product to the products API', async function() {
+    it('Updates product in the products API', async function() {
+        let productID = 43900
         const response = await request('localhost:3030')
-            .put(`/products/${sampleProductID}`)
+            .put(`/products/${productID}`)
             .send({
                 name: 'Test product',
                 type: 'Testing',
                 upc: '421',
                 description: 'A super cool product',
                 model: '330',
+                price: 200,
+                shipping: 22,
+                manufacturer: 'Duracel',
             })
-
     })
 
 
@@ -93,6 +100,26 @@ describe('Products API', function() {
 
         expect(product).to.have.status(200)
     })
+})
 
-
+chai.tv4.addSchema('/products', {
+    title: 'Product API Schema',
+    type: 'object',
+    required: ['id', 'name', 'type', 'upc', 'description', 'model', 'price'],
+    properties: {
+        id: 'number',
+        name: 'string',
+        type: 'string',
+        upc: 'string',
+        description: 'string',
+        model: 'string',
+        price: 'number',
+        shipping: 'number',
+        manufacturer: 'string',
+        url: 'string',
+        image: 'string',
+        createdAt: 'string',
+        updatedAt: 'string',
+        categories: 'array'
+    }
 })
