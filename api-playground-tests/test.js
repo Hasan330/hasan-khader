@@ -17,30 +17,69 @@ chai.tv4.multiple = false;
 chai.tv4.cyclicCheck = false;
 
 
-describe('General Failure Cases', function(){
-	it('handles searching for wrong route', async function(){
-		try{
-			let wrongURL = await request('localhost:3030')
-        	.get(`/123`)
-		}
-		catch(err){
-			console.log(err.response.body)
-			expect(err).to.have.status(404);
-		}        
-	})
+describe('General Failure Cases', function() {
+    it('Handles searching for wrong route', async function() {
+        try {
+            let wrongURL = await request('localhost:3030')
+                .get(`/123`)
+        } catch (err) {
+            console.log(err.response.body)
+
+            expect(err).to.have.status(404)
+        }
+    })
 })
 
 
+describe('Products API', function() {
+    it('Gets product by id', async function() {
+        let sampleProductID = 43900
+        const product = await request('localhost:3030')
+            .get(`/products/${sampleProductID}`)
 
-describe('Products API', function () {
-  it('can get product by id', async function () {
-  	let sampleProductID = 43900
-  	
-  	const product = await request('localhost:3030')
-        .get(`/products/${sampleProductID}`)
-  	
+        expect(product)
+            .to.have.status(200)
+            .and.to.have.property('body')
+            .and.to.include({ id: sampleProductID })
+    });
 
-    console.log(product.body)
-    expect(product).to.have.status(200)
-  });
+
+    it('Matches product schema', async function() {
+
+    })
+
+
+    it('Fails on searching for wrong product', async function() {
+        let wrongProductID = 'wrongproduct'
+        try {
+            const product = await request('localhost:3030')
+                .get(`/products/${wrongProductID}`)
+        } catch (err) {
+            expect(err)
+                .to.have.status(404)
+        }
+    })
+
+    it('Fails to add product with missing fields to the products API', async function() {
+        let newProductID = 1
+        try {
+            await request('localhost:3030')
+                .put(`/products/${newProductID}`)
+        } catch (err) {
+            expect(err)
+                .to.have.status(400)
+                .and.to.nested.include({ 'response.body.message': 'Invalid Parameters' });
+        }
+
+    })
+
+
+    it('Gets to product API', async function() {
+        const product = await request('localhost:3030')
+            .get(`/products/`)
+
+        expect(product).to.have.status(200)
+    })
+
+
 })
