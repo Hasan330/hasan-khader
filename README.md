@@ -40,8 +40,12 @@ Since the app consists Basic Users who should be able to do a subset of what Mem
 
 
 
-2) Membr Users FLows:
-Are the subset of test cases that are related to member users which basic users shouln't be able to access unless they become members
-
-
-
+2) Member Users Flows:
+	- Test ability to create and track multi-currency accounts
+	- Test account synchronization across multiple device
+	- Test adding a passcode for the account
+	- Test cases where wrong passcodes are added
+	- Test widgets functionality
+		- Data correctness
+		- Customization
+		- Widget Appearance
