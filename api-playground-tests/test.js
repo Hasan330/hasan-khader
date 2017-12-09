@@ -23,8 +23,7 @@ describe('General Failure Cases', function() {
             let wrongURL = await request('localhost:3030')
                 .get(`/123`)
         } catch (err) {
-            console.log(err.response.body)
-
+            // console.log(err.response.body)
             expect(err).to.have.status(404)
         }
     })
@@ -32,8 +31,9 @@ describe('General Failure Cases', function() {
 
 
 describe('Products API', function() {
+    const sampleProductID = 43900;
+
     it('Gets product by id', async function() {
-        let sampleProductID = 43900
         const product = await request('localhost:3030')
             .get(`/products/${sampleProductID}`)
 
@@ -66,10 +66,23 @@ describe('Products API', function() {
             await request('localhost:3030')
                 .put(`/products/${newProductID}`)
         } catch (err) {
+            // console.log(err.response.body)
             expect(err)
                 .to.have.status(400)
                 .and.to.nested.include({ 'response.body.message': 'Invalid Parameters' });
         }
+    })
+
+    it('Updates product to the products API', async function() {
+        const response = await request('localhost:3030')
+            .put(`/products/${sampleProductID}`)
+            .send({
+                name: 'Test product',
+                type: 'Testing',
+                upc: '421',
+                description: 'A super cool product',
+                model: '330',
+            })
 
     })
 
